@@ -1,0 +1,33 @@
+test_refresh_flag (test_avatar_policy.AvatarPolicy.test_refresh_flag) ... ok
+test_timing_diagnostics (test_avatar_policy.AvatarPolicy.test_timing_diagnostics) ... ok
+test_verified_tls (test_avatar_policy.AvatarPolicy.test_verified_tls) ... ok
+test_brand_defaults (test_github_rc.GithubRC.test_brand_defaults) ... ok
+test_licenses (test_github_rc.GithubRC.test_licenses) ... ok
+test_no_embedded_binary (test_github_rc.GithubRC.test_no_embedded_binary) ... ok
+test_tls_verified (test_github_rc.GithubRC.test_tls_verified) ... ok
+test_no_pretend_binaries (test_pages_release.PagesReleaseTests.test_no_pretend_binaries) ... ok
+test_no_unverified_flasher_button (test_pages_release.PagesReleaseTests.test_no_unverified_flasher_button) ... ok
+test_pages_workflow_exists (test_pages_release.PagesReleaseTests.test_pages_workflow_exists) ... ok
+test_doc_assets (test_rc3_release.RC3.test_doc_assets) ... ok
+test_license_and_author (test_rc3_release.RC3.test_license_and_author) ... ok
+test_no_channel_brand_in_firmware (test_rc3_release.RC3.test_no_channel_brand_in_firmware) ... ok
+test_no_factory_web_flasher (test_rc3_release.RC3.test_no_factory_web_flasher) ... ok
+test_no_insecure_tls (test_rc3_release.RC3.test_no_insecure_tls) ... ok
+test_admin_protection (test_release.ReleaseInvariants.test_admin_protection) ... ok
+test_avatar_domain_restriction (test_release.ReleaseInvariants.test_avatar_domain_restriction) ... ok
+test_avatar_not_fetched_on_every_poll (test_release.ReleaseInvariants.test_avatar_not_fetched_on_every_poll) ... ok
+test_helpers_present (test_release.ReleaseInvariants.test_helpers_present) ... ok
+test_no_obvious_embedded_google_key (test_release.ReleaseInvariants.test_no_obvious_embedded_google_key) ... ok
+test_only_st7789 (test_release.ReleaseInvariants.test_only_st7789) ... ok
+test_post_origin_policy (test_release.ReleaseInvariants.test_post_origin_policy) ... ok
+test_tls_mode_is_explicit_and_documented (test_release.ReleaseInvariants.test_tls_mode_is_explicit_and_documented) ... ok
+test_wifi_dependent_startup_poll (test_release.ReleaseInvariants.test_wifi_dependent_startup_poll) ... ok
+test_all_modes_remain (test_snapshot_defaults.SnapshotDefaults.test_all_modes_remain) ... ok
+test_persistence_and_inversion (test_snapshot_defaults.SnapshotDefaults.test_persistence_and_inversion) ... ok
+test_reference_board_default (test_snapshot_defaults.SnapshotDefaults.test_reference_board_default) ... ok
+test_remote_touch_kept (test_snapshot_defaults.SnapshotDefaults.test_remote_touch_kept) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.004s
+
+OK

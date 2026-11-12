@@ -1,0 +1,11 @@
+.pio/
+firmware/.pio/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+*.pem
+*.key
+*.bin
+.DS_Store
+.vscode/

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Documentation and installation status for the CYD YouTube Dashboard firmware.">
+  <title>CYD YouTube Dashboard — ESP32 channel statistics display</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #eaf1fa; background: #0b1120; line-height: 1.65; }
+    a { color: #8fe2d8; }
+    a:hover { color: #c4fff5; }
+    .wrap { width: min(100% - 40px, 980px); margin: 0 auto; }
+    header { padding: 64px 0 28px; }
+    .eyebrow { color: #6dd5c7; font-size: .8rem; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 780px; margin: 14px 0 16px; font-size: clamp(2.4rem, 6vw, 4.4rem); letter-spacing: -.05em; line-height: 1.1; }
+    h2 { margin-top: 0; font-size: 1.35rem; }
+    p { color: #b8c7d9; }
+    .lead { max-width: 700px; font-size: 1.18rem; }
+    .status { display: inline-block; margin-top: 10px; padding: 6px 12px; border: 1px solid #64748b; border-radius: 999px; color: #d7e3f0; font-size: .85rem; }
+    .diagram { display: block; width: 100%; margin: 20px 0 34px; border-radius: 16px; border: 1px solid #24344e; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; margin-bottom: 44px; }
+    .card { padding: 24px; border: 1px solid #2b3e58; border-radius: 16px; background: #121d30; }
+    .card p:last-child { margin-bottom: 0; }
+    .notice { padding: 22px 26px; border-left: 3px solid #6dd5c7; background: #142338; border-radius: 8px; margin-bottom: 42px; }
+    footer { padding: 26px 0 44px; border-top: 1px solid #26344b; font-size: .9rem; color: #98acc4; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="eyebrow">ESP32 · ST7789 · YouTube Data API</div>
+      <h1>Your channel, on a dedicated display.</h1>
+      <p class="lead">CYD YouTube Dashboard brings public YouTube channel statistics to a compact ESP32 touchscreen. Configure it once, then let it run independently.</p>
+      <span class="status">RC6.1 development candidate · Factory flashing not yet validated</span>
+    </header>
+    <img class="diagram" src="architecture.svg" alt="System architecture: YouTube Data API communicates with an ESP32 CYD, which drives the display and provides local browser settings">
+    <div class="grid">
+      <section class="card">
+        <h2>Build it yourself <small style="font-size:.7em;color:#6dd5c7">AVAILABLE</small></h2>
+        <p>Use PlatformIO with the supported ST7789 board. The source build is the current installation method.</p>
+        <p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/USER_GUIDE.md">Installation guide</a></p>
+      </section>
+      <section class="card">
+        <h2>Browser USB installer <small style="font-size:.7em;color:#e6c989">PENDING VALIDATION</small></h2>
+        <p>We are validating a clean-install image and its flash layout. Until then, no one-click flash button is offered. You can still compile and upload using PlatformIO.</p>
+        <p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/GITHUB_PAGES_AND_FLASHER.md">Installer status and plan</a></p>
+      </section>
+      <section class="card">
+        <h2>Connect your channel</h2>
+        <p>Create a separate Google Cloud project, enable YouTube Data API v3 and restrict the key to that API.</p>
+        <p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/GOOGLE_YOUTUBE_API_SETUP.md">API key setup</a></p>
+      </section>
+      <section class="card">
+        <h2>Follow development</h2>
+        <p>Check what has been tested, which risks remain and what is required before a public firmware release.</p>
+        <p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/RELEASE_READINESS.md">Release readiness</a></p>
+      </section>
+    </div>
+    <section class="notice">
+      <h2>Why is the USB installer intentionally disabled?</h2>
+      <p>Factory images, flash offsets and first-boot behavior have not yet been verified on a clean device. Enabling one-click flashing now could leave users with an unbootable board or overwrite saved settings. We will enable it only after hardware validation.</p>
+    </section>
+    <footer>Project by <a href="https://www.youtube.com/@MassaCreto">MassaCreto</a>. Channel artwork and branding are not included in the firmware. This website does not request or collect API keys.</footer>
+  </main>
+</body>
+</html>

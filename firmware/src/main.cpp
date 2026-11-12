@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <esp_arduino_version.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
@@ -59,10 +60,38 @@ int8_t activeLedEvent = -1;
 uint64_t prevSubs = 0,prevViews = 0,prevLikes = 0,prevComments = 0;
 bool havePrevCounters = false;
 String prevChannelIdentity;
-void ledOff() { for(uint8_t i=0;i<3;++i) ledcWrite(kLedChannel[i],255); }
+// Arduino-ESP32 2.x uses LEDC channels; 3.x binds PWM directly to GPIO pins.
+void writeLedPwm(uint8_t index, uint8_t duty) {
+#if ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcWrite(kLedPins[index], duty);
+#else
+  ledcWrite(kLedChannel[index], duty);
+#endif
+}
+void writeBacklightPwm(uint8_t duty) {
+#if ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcWrite(kBacklightPin, duty);
+#else
+  ledcWrite(0, duty);
+#endif
+}
+void initPwm() {
+#if ESP_ARDUINO_VERSION_MAJOR >= 3
+  for (uint8_t i = 0; i < 3; ++i) ledcAttach(kLedPins[i], 5000, 8);
+  ledcAttach(kBacklightPin, 5000, 8);
+#else
+  for (uint8_t i = 0; i < 3; ++i) {
+    ledcSetup(kLedChannel[i], 5000, 8);
+    ledcAttachPin(kLedPins[i], kLedChannel[i]);
+  }
+  ledcSetup(0, 5000, 8);
+  ledcAttachPin(kBacklightPin, 0);
+#endif
+}
+void ledOff() { for(uint8_t i=0;i<3;++i) writeLedPwm(i,255); }
 void ledColor(uint32_t color, uint8_t level) {
   uint8_t rgb[3] = {uint8_t(color>>16),uint8_t(color>>8),uint8_t(color)};
-  for(uint8_t i=0;i<3;++i) ledcWrite(kLedChannel[i],255-(uint16_t(rgb[i])*level/255));
+  for(uint8_t i=0;i<3;++i) writeLedPwm(i,255-(uint16_t(rgb[i])*level/255));
 }
 void notifyEvent(EventKind event) {
   if(!ledEnabled || !eventEnabled[event]) return;
@@ -784,7 +813,7 @@ void loadSettings() {
 }
 
 void applyBrightness() {
-  ledcWrite(0, brightness);
+  writeBacklightPwm(brightness);
 }
 
 String escapeHtml(const String& input) {
@@ -1822,13 +1851,8 @@ void setup() {
   loadSettings();
   loadDiagnostics();
   recordDiagnostic('I', "Device booted");
-  for(uint8_t i=0;i<3;++i) {
-    ledcSetup(kLedChannel[i],5000,8);
-    ledcAttachPin(kLedPins[i],kLedChannel[i]);
-  }
+  initPwm();
   ledOff();
-  ledcSetup(0, 5000, 8);
-  ledcAttachPin(kBacklightPin, 0);
   applyBrightness();
   display.init();
   TJpgDec.setCallback(avatarBlock);

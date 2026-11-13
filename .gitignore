@@ -9,3 +9,9 @@ __pycache__/
 *.bin
 .DS_Store
 .vscode/
+
+# Local release evidence and private flash backups
+local-review.json
+private_flash_backup.bin
+private_flash_backup*.bin
+*_private_backup*/

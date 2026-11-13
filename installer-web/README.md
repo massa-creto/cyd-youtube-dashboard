@@ -3,3 +3,6 @@ This is a safe placeholder, not a working flasher. It will be deployed to GitHub
 
 
 **Important:** `tools/make_web_release.py` is a review-only generator. It is not connected to Pages deployment. Its application-only manifest is not a factory installer, and its offsets must be independently verified on the target device before use.
+
+
+The diagnostics section provides `/diagnostics/` for read-only USB metadata and simulation. It does not identify the ESP32 chip, read flash, or install firmware. HTTPS or localhost and Chrome/Edge are required for real Web Serial selection.

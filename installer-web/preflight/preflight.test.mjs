@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {parseFlashId,verifyFlashEvidence} from './flash-id-policy.mjs';
+const log=['Flash ID: 164020','Manufacturer: 20','Device: 4016','Detected flash size: 4MB'];
+test('accept original ESP32 4MB JEDEC hex string',()=>assert.equal(parseFlashId('164020'),0x164020));
+test('accept numeric JEDEC ID',()=>assert.equal(parseFlashId(0x164020),0x164020));
+test('accept void return when official library logs full evidence',()=>assert.equal(verifyFlashEvidence(undefined,log).bytes,4194304));
+test('accept matching numeric return and log',()=>assert.equal(verifyFlashEvidence(0x164020,log).id,0x164020));
+test('reject 8MB JEDEC',()=>assert.throws(()=>parseFlashId('174020')));
+test('reject mismatched capacity',()=>assert.throws(()=>verifyFlashEvidence(undefined,[...log.slice(0,3),'Detected flash size: 8MB'])));
+test('reject mismatched manufacturer',()=>assert.throws(()=>verifyFlashEvidence(undefined,['Flash ID: 164020','Manufacturer: 21',...log.slice(2)])));
+test('reject incomplete evidence',()=>assert.throws(()=>verifyFlashEvidence(undefined,['Flash ID: 164020'])));
+test('reject contradictory return value',()=>assert.throws(()=>verifyFlashEvidence(0x164021,log)));

@@ -217,6 +217,10 @@ String youtubeKey, youtubeChannelId;
 String adminUser = "admin", adminSalt, adminHash;
 bool forcePasswordChange = true;
 bool apEnabled = true;
+// Temporary recovery access point. Never persisted to NVS.
+bool recoveryApActive = false;
+uint32_t wifiDisconnectedSince = 0;
+constexpr uint32_t kRecoveryApDelayMs = 60000UL;
 String deviceHostname = "cyd-youtube";
 String apName = "CYD-YOUTUBE";
 String apPassword = "creator1234";
@@ -720,7 +724,7 @@ bool securePasswordEqual(const String& a,const String& b) {
   uint8_t diff=0;for(int i=0;i<64;++i)diff|=uint8_t(a[i]^b[i]);return diff==0;
 }
 void applyApMode() {
-  if(apEnabled) {
+  if(apEnabled || recoveryApActive) {
     WiFi.mode(WIFI_AP_STA);
     WiFi.softAP(apName.c_str(),apOpen ? nullptr : apPassword.c_str(),apChannel,apHidden,apMaxClients);
   }
@@ -1875,6 +1879,7 @@ void setup() {
   tzset();
   configTime(0, 0, "pool.ntp.org", "time.google.com");
   startConfigServer();
+  wifiDisconnectedSince = millis();
   if (wifiName.length()) WiFi.begin(wifiName.c_str(), wifiPassword.c_str());
   render();
   Serial.println("CYD YouTube Dashboard v0.9.6.2 Fast Startup RC ready");
@@ -1904,6 +1909,25 @@ void loop() {
       recordDiagnostic('I', "Wi-Fi connected");
     } else {
       recordDiagnostic('W', "Wi-Fi disconnected");
+    }
+  }
+  // Recovery AP is independent of the user's saved AP preference.
+  // Bring it up after a sustained STA outage, and remove it when STA returns.
+  // No credentials or AP preference are modified in persistent storage.
+  if (currentWifiStatus == WL_CONNECTED) {
+    wifiDisconnectedSince = 0;
+    if (recoveryApActive) {
+      recoveryApActive = false;
+      applyApMode();
+      recordDiagnostic('I', "Recovery AP stopped: Wi-Fi restored");
+    }
+  } else {
+    if (wifiDisconnectedSince == 0) wifiDisconnectedSince = millis() ? millis() : 1;
+    if (!apEnabled && !recoveryApActive &&
+        uint32_t(millis() - wifiDisconnectedSince) >= kRecoveryApDelayMs) {
+      recoveryApActive = true;
+      applyApMode();
+      recordDiagnostic('W', "Recovery AP enabled: Wi-Fi unavailable");
     }
   }
   if (wifiName.length() && WiFi.status() != WL_CONNECTED && millis() - lastWifiAttempt > 15000) {

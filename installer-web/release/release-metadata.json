@@ -1,0 +1,70 @@
+{
+  "status": "HARDWARE_TESTED_APPLICATION_WRITE",
+  "write_enabled": false,
+  "target": "ESP32-D0WD-V3",
+  "flash_size_bytes": 4194304,
+  "artifacts": [
+    {
+      "file": "bootloader.bin",
+      "offset": "0x1000",
+      "size_bytes": 17536,
+      "sha256": "3d234a7471f67b013686dabd4dee7c1fa915c9928463616a94bc9297acf1abf8"
+    },
+    {
+      "file": "partitions.bin",
+      "offset": "0x8000",
+      "size_bytes": 3072,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    },
+    {
+      "file": "firmware.bin",
+      "offset": "0x10000",
+      "size_bytes": 1144592,
+      "sha256": "17aeb5757f95cbdaba6cc61a01b0f2f2b25e6a9bd3afc341c0287dda4a9aadb8"
+    }
+  ],
+  "partitions": [
+    {
+      "label": "nvs",
+      "type": 1,
+      "subtype": 2,
+      "offset": 36864,
+      "size": 20480
+    },
+    {
+      "label": "otadata",
+      "type": 1,
+      "subtype": 0,
+      "offset": 57344,
+      "size": 8192
+    },
+    {
+      "label": "app0",
+      "type": 0,
+      "subtype": 16,
+      "offset": 65536,
+      "size": 1310720
+    },
+    {
+      "label": "app1",
+      "type": 0,
+      "subtype": 17,
+      "offset": 1376256,
+      "size": 1310720
+    },
+    {
+      "label": "spiffs",
+      "type": 1,
+      "subtype": 130,
+      "offset": 2686976,
+      "size": 1441792
+    },
+    {
+      "label": "coredump",
+      "type": 1,
+      "subtype": 3,
+      "offset": 4128768,
+      "size": 65536
+    }
+  ]
+}

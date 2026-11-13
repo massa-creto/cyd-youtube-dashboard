@@ -15,3 +15,7 @@ local-review.json
 private_flash_backup.bin
 private_flash_backup*.bin
 *_private_backup*/
+
+# Public, hashed firmware artifacts are intentionally versioned.
+!installer-web/release/
+!installer-web/release/*.bin

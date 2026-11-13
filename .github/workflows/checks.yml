@@ -13,6 +13,10 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m unittest discover -s tests -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --test installer-web/backup/*.test.mjs installer-web/preflight/*.test.mjs installer-web/install/*.test.mjs
   firmware-build:
     runs-on: ubuntu-latest
     steps:

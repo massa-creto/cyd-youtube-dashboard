@@ -29,25 +29,26 @@
     footer { padding: 26px 0 44px; border-top: 1px solid #26344b; font-size: .9rem; color: #98acc4; }
   </style>
 </head>
-<body>
+<body><div style="padding:12px;text-align:center;background:#163c39"><a href="./install/">Install firmware using Chrome or Edge — backup optional</a></div>
   <main class="wrap">
     <header>
       <div class="eyebrow">ESP32 · ST7789 · YouTube Data API</div>
       <h1>Your channel, on a dedicated display.</h1>
       <p class="lead">CYD YouTube Dashboard brings public YouTube channel statistics to a compact ESP32 touchscreen. Configure it once, then let it run independently.</p>
-      <span class="status">RC7 development candidate · Factory flashing not yet validated</span>
+      <span class="status">Browser application write and boot confirmed on one ST7789 CYD</span>
     </header>
     <img class="diagram" src="architecture.svg" alt="System architecture: YouTube Data API communicates with an ESP32 CYD, which drives the display and provides local browser settings">
+    <section class="notice"><h2>Get started</h2><p><a href="install/">Open the browser installer</a> or <a href="local-backup/">create a local full-device backup</a>. The installer writes firmware; backup is optional. Check your board revision before proceeding.</p></section>
     <div class="grid">
       <section class="card">
         <h2>Build it yourself <small style="font-size:.7em;color:#6dd5c7">AVAILABLE</small></h2>
-        <p>Use PlatformIO with the supported ST7789 board. The source build is the current installation method.</p>
+        <p>Use PlatformIO with the supported ST7789 board. Use this route to compile and upload your own firmware.</p>
         <p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/USER_GUIDE.md">Installation guide</a></p>
       </section>
       <section class="card">
-        <h2>Browser USB installer <small style="font-size:.7em;color:#e6c989">PENDING VALIDATION</small></h2>
-        <p>We are validating a clean-install image and its flash layout. Until then, no one-click flash button is offered. You can still compile and upload using PlatformIO.</p>
-        <p><a href="recovery/">Recovery and unbrick guide</a> · <a href="diagnostics/">Open read-only USB diagnostics</a> · <a href="install-status/">Installation readiness</a></p><p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/GITHUB_PAGES_AND_FLASHER.md">Installer status and plan</a></p>
+        <h2>Browser USB installer <small style="font-size:.7em;color:#6dd5c7">HARDWARE TESTED</small></h2>
+        <p>Install the supplied firmware over USB in Chrome or Edge. An ESP32-D0WD-V3 / 4 MB / ST7789 board was successfully programmed and booted with settings retained. Other boards and first-time full installs remain unverified. Backup is optional; without one, the installer uses a three-image write that can affect existing settings.</p>
+        <p><a href="install/">Open installer</a> · <a href="local-backup/">Local backup</a> · <a href="recovery/">Recovery guide</a> · <a href="diagnostics/">USB diagnostics</a> · <a href="backup/">Backup preview</a></p>
       </section>
       <section class="card">
         <h2>Connect your channel</h2>
@@ -61,14 +62,11 @@
       </section>
     </div>
     <section class="notice" role="note">
-      <h2>Back up before flashing — including new devices</h2>
-      <p>Factory firmware may be valuable. A complete flash image may contain Wi-Fi passwords, YouTube API keys, administrator credentials and other private settings. Store backups locally, never share them publicly, and verify the backup before writing anything. Browser backup and restore are still under development; the current website does not read or write flash.</p>
-      <p><strong>Flashing can leave a device unbootable.</strong> Recovery is often possible using the ESP32 ROM download mode, but is not guaranteed. <a href="recovery/">Read the recovery and unbrick guide</a> before attempting installation.</p>
+      <h2>Backup is optional, but recommended</h2>
+      <p>Full 4 MB backups can contain Wi-Fi passwords, API keys and other secrets. Store them privately. The optional local backup tool requires Python and esptool; it does not run on GitHub Pages. Browser restore is not available.</p>
+      <p><strong>Flashing can leave a device unbootable.</strong> Without a backup, the original firmware and settings may not be recoverable. <a href="recovery/">Read the recovery guide</a>.</p>
     </section>
-    <section class="notice">
-      <h2>Why is the USB installer intentionally disabled?</h2>
-      <p>Factory images, flash offsets and first-boot behavior have not yet been verified on a clean device. Enabling one-click flashing now could leave users with an unbootable board or overwrite saved settings. We will enable it only after hardware validation.</p>
-    </section>
+    <section class="notice"><h2>Test coverage and limitations</h2><p>Application-only flashing and subsequent boot were confirmed on one device. Full three-image installation, factory-first-boot behavior and full-device restore have not been hardware validated. Do not treat this as a universal CYD installer.</p></section>
     <footer>Project by <a href="https://www.youtube.com/@MassaCreto">MassaCreto</a>. Channel artwork and branding are not included in the firmware. This website does not request or collect API keys.</footer>
   </main>
 </body>

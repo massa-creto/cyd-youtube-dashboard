@@ -8,4 +8,4 @@ class GithubRC(unittest.TestCase):
  def test_licenses(self):
   self.assertIn('PolyForm Noncommercial', (R/'LICENSE').read_text()); self.assertIn('CC BY-NC-SA 4.0',(R/'docs/LICENSE').read_text())
  def test_no_embedded_binary(self):
-  self.assertFalse(list(R.rglob('firmware.bin')))
+  self.assertEqual([f.relative_to(R).as_posix() for f in R.rglob('firmware.bin')], ['installer-web/release/firmware.bin'])

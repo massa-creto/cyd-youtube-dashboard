@@ -1,4 +1,4 @@
-name: Build, test and publish safe installer landing page
+name: Publish CYD Web Flasher
 on:
   workflow_dispatch:
   push:
@@ -21,6 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --test installer-web/backup/*.test.mjs installer-web/preflight/*.test.mjs installer-web/install/*.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

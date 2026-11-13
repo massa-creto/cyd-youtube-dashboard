@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CYD Local Backup</title>
+<style>body{background:#101827;color:#f1f5f9;font:17px system-ui;max-width:780px;margin:55px auto;padding:0 20px;line-height:1.6}button{padding:14px 24px;background:#38bdf8;border:0;border-radius:8px;font-weight:700;cursor:pointer}button:disabled{opacity:.5;cursor:wait}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#07101d;padding:18px;border-radius:10px}a{color:#7dd3fc}progress{width:100%;height:24px;accent-color:#38bdf8}.sub{color:#a7b5c7}</style></head>
+<body><h1>CYD — automatic full backup</h1><p>This local-only workflow reads all 4 MB using Python esptool. It does not write or erase flash. Close browser serial connections and serial monitors before starting. The backup may contain passwords and API keys: keep it private.</p>
+<button id="go">Read 4 MB and download backup</button><p id="percent" aria-live="polite">Ready</p><progress id="progress" max="100" value="0"></progress><p class="sub" id="elapsed"></p><pre id="status">Ready. The local Python companion must be running.</pre><p><a href="../install/">Return to browser installer</a></p>
+<script type="module">
+const button=document.querySelector('#go'),status=document.querySelector('#status'),bar=document.querySelector('#progress'),percent=document.querySelector('#percent'),elapsed=document.querySelector('#elapsed');
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const save=(name,blob)=>{const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000)};
+async function getJSON(url,options){const r=await fetch(url,{cache:'no-store',...options});const data=await r.json();if(!r.ok)throw Error(data.error||`HTTP ${r.status}`);return data;}
+button.onclick=async()=>{button.disabled=true;bar.value=0;percent.textContent='Starting...';status.textContent='Starting read-only backup. Keep USB connected.';try{
+  const started=await getJSON('/local-api/backup/start',{method:'POST'});
+  let result;
+  while(true){await sleep(1000);result=await getJSON('/local-api/backup/status');if(result.id!==started.id)throw Error('Backup session changed');bar.value=result.percent||0;percent.textContent=`${result.percent||0}% — ${result.state}`;elapsed.textContent=`Elapsed: ${result.elapsed_seconds}s`;status.textContent=result.message||result.state;if(result.state==='done')break;if(result.state==='error')throw Error(result.message||'Backup failed');}
+  status.textContent='Reading completed. Downloading and checking SHA-256...';
+  const r=await fetch('/local-api/backup/download',{cache:'no-store'});if(!r.ok)throw Error('Download failed: HTTP '+r.status);
+  const bytes=new Uint8Array(await r.arrayBuffer());if(bytes.length!==4194304)throw Error('Incomplete backup: '+bytes.length+' bytes');
+  const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
+  if(r.headers.get('X-Backup-SHA256')!==digest||result.sha256!==digest)throw Error('Backup SHA-256 mismatch');
+  save('cyd-full-backup.bin',new Blob([bytes]));save('cyd-full-backup.sha256.txt',new Blob([digest+'  cyd-full-backup.bin\n'],{type:'text/plain'}));
+  status.textContent='BACKUP READY: 4194304 bytes. SHA-256: '+digest+'\nConfirm both files are saved in Downloads. Browser downloads may require permission.';
+}catch(e){status.textContent='BACKUP FAILED: '+e.message+'\nNo flash write was requested.';percent.textContent='Failed';}finally{button.disabled=false;}};
+</script></body></html>

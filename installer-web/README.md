@@ -1,10 +1,7 @@
-# GitHub Pages installer landing (RC2)
-This is a safe placeholder, not a working flasher. It will be deployed to GitHub Pages by `.github/workflows/pages.yml`. Full clean-install binaries and verified offsets are required before enabling browser flashing.
+# CYD Web Flasher
 
+This folder is the static GitHub Pages site. Open `/install/` for the Web Serial installer, `/recovery/` for recovery guidance, and `/local-backup/` for the optional backup UI (which requires the separate localhost Python companion).
 
-**Important:** `tools/make_web_release.py` is a review-only generator. It is not connected to Pages deployment. Its application-only manifest is not a factory installer, and its offsets must be independently verified on the target device before use.
+The application-only write and boot were tested on one original ESP32-D0WD-V3 / 4 MB / ST7789 CYD. Full three-image installation has not been hardware verified. Browser restore is disabled.
 
-
-The diagnostics section provides `/diagnostics/` for read-only USB metadata and simulation. It does not identify the ESP32 chip, read flash, or install firmware. HTTPS or localhost and Chrome/Edge are required for real Web Serial selection.
-
-Recovery and unbrick instructions are published at `recovery/`. They do not perform writes. Browser backup and factory flashing remain disabled pending hardware validation.
+The install page validates hashes in `release/release-metadata.json` before writing. Keep `release/*.bin` and metadata synchronized. Do not upload private backups. The esptool-js browser bundle is loaded from a version-pinned CDN.

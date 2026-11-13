@@ -1,95 +1,68 @@
 # CYD YouTube Dashboard
 
-**A little screen for the numbers you keep checking.**
+**Your YouTube channel, on a tiny dedicated touchscreen.**
 
-![How the dashboard works](docs/assets/architecture.svg)
+![System overview](docs/assets/architecture.svg)
 
-If you run a YouTube channel, you've probably checked your subscriber count more often than you'd care to admit. This project puts public channel statistics on a small, inexpensive ESP32 touchscreen so you can leave your browser tabs alone.
+This project turns a supported ESP32 Cheap Yellow Display into a standalone channel dashboard. It displays public YouTube statistics, offers on-device touch controls and provides a local web interface for configuration.
 
-It's a standalone device: once connected to Wi-Fi and configured with your own YouTube Data API key, the CYD fetches channel data and displays it locally. The built-in web dashboard handles setup, appearance, diagnostics and maintenance.
+## Hardware
 
-> **Project status:** Development candidate (RC6.1 firmware baseline). Source builds and device uploads have been tested on the maintainer's ST7789 CYD. The one-click factory USB installer is **not released yet**; its image and first-boot behavior still require validation. Please don't use an unverified installer image.
+- **Tested board:** ESP32-2432S028R with original ESP32-D0WD-V3, 4 MB flash, **ST7789** 240×320 display and XPT2046 touch.
+- USB **data** cable; Chrome or Edge for Web Serial installation.
+- 2.4 GHz Wi-Fi and your own YouTube Data API v3 key for channel statistics.
 
-## What you'll need
+Similar-looking CYD boards may have different display drivers or wiring. Do not flash an unverified variant.
 
-| Item | Notes |
-| --- | --- |
-| ESP32 Cheap Yellow Display | **ESP32-2432S028R**, 2.8-inch 240×320 touchscreen, **ST7789** variant used for testing |
-| USB data cable | A charging-only cable won't work for flashing |
-| Computer | Windows, macOS or Linux for the PlatformIO route; Chrome/Edge with Web Serial for the future browser route |
-| 2.4 GHz Wi-Fi | The ESP32 cannot join a 5 GHz-only network |
-| Google account | To create your own YouTube Data API v3 key |
-| Public YouTube channel | Your own channel or another public channel, subject to API availability |
+## Install from your browser
 
-**Check your board before flashing.** CYD boards look similar but may use different display controllers, touch wiring and flash layouts. This project currently targets the ST7789 configuration above; other variants are not automatically supported.
+Open **[CYD Web Flasher](https://massa-creto.github.io/cyd-youtube-dashboard/install/)** in Chrome or Edge on a desktop computer.
 
-## Choose your installation route
+1. Connect your supported CYD via USB and close serial monitors.
+2. Click **Verify package & device**, then select the USB serial device.
+3. Review the selected installation mode and warnings.
+4. A backup is **optional**. With a matching 4 MB backup, the installer selects application-only writing at `0x10000`. Without one, the current installer selects a **full three-image installation** (bootloader `0x1000`, partitions `0x8000`, firmware `0x10000`), which may make existing data inaccessible.
+5. Confirm the risk and initiate the write. Keep USB connected until completion, then verify the display, touch, Wi-Fi and settings.
 
-### Option A — Build it yourself (available now)
+**Hardware evidence:** a browser application write completed and the device booted successfully with its previous settings on one ESP32-D0WD-V3 / 4 MB ST7789 CYD. This does **not** validate full three-image installation on factory-new boards or all CYD revisions.
 
-1. Install [Visual Studio Code](https://code.visualstudio.com/) and the [PlatformIO IDE extension](https://platformio.org/install/ide?install=vscode).
-2. Download or clone this repository, then open the **`firmware/`** folder as your PlatformIO project.
-3. Connect the CYD using a USB data cable.
-4. Run **PlatformIO → Build**. Check that the environment is `cyd_st7789`.
-5. Run **Upload**, then **Monitor** at 115200 baud.
-6. Follow [First-time setup](docs/USER_GUIDE.md) to configure the device.
+**Important:** The installer checks packaged binary hashes and device identity. It does not guarantee that the firmware will boot on every board. Restore is **not implemented** in the browser installer. Read the [recovery guide](docs/WEB_FLASHER_SAFETY_AND_RECOVERY.md) before flashing.
 
-The firmware configuration is in [`firmware/platformio.ini`](firmware/platformio.ini). If your display controller differs, do not flash this build blindly.
+## Optional full-device backup
 
-### Option B — Install from your browser (coming soon)
+A separate local Python companion can read the entire 4 MB flash, create a `.bin` file and provide a SHA-256 checksum. This was tested on the same device and took about 6 minutes. The progress indicator may remain at 0% until the operation completes; elapsed time continues to update.
 
-The [installer website](https://massa-creto.github.io/cyd-youtube-dashboard/) is hosted on GitHub Pages. Our planned USB installer uses ESP Web Tools, so visitors won't need an IDE or Python. **The factory-flash action stays disabled until we verify the generated binaries and flash offsets on a clean board.** The page explains the current status and links to the source installation guide.
-
-A browser installation will require a compatible Chrome/Edge browser, a USB data cable and permission to access the serial port. It won't require a Google login to flash; each user configures their own API key afterwards.
-
-## What it does
-
-- Displays public YouTube channel statistics and channel artwork on the TFT.
-- Provides a local web control panel for Wi-Fi, channel setup, colors and display settings.
-- Offers a real TFT snapshot and remote touch from the browser (on demand, not video streaming).
-- Includes RGB notifications, backup/restore options and quota information.
-- Shows device uptime and a compact diagnostics view with a recent event history.
-
-For a realistic list of implemented and unverified features, see the [feature matrix](docs/FEATURE_MATRIX.md).
-
-## First-time setup and API safety
-
-Each device owner creates **their own** Google Cloud project and YouTube Data API v3 key. We don't ship a shared key and the GitHub Pages site doesn't ask for your credentials.
-
-Start with the [device setup guide](docs/USER_GUIDE.md), then follow the [Google API key guide](docs/GOOGLE_YOUTUBE_API_SETUP.md). Restrict the key to **YouTube Data API v3**, review quota limits, and avoid linking a billing account unless needed. Quota restrictions are useful but cannot guarantee that a leaked key won't consume the project's quota.
-
-## How the pieces fit together
-
-```text
-YouTube Data API v3
-        │ HTTPS
-        ▼
- ESP32 + Wi-Fi + NVS ───── local HTTP admin dashboard
-        │                         │
-        ├── ST7789 TFT             ├── Settings / Diagnostics
-        ├── XPT2046 touch          └── Snapshot / Remote touch
-        └── RGB LED
+```powershell
+py -3.13 -m pip install esptool
+py -3.13 tools/local_backup_server.py
 ```
 
-The device stores Wi-Fi credentials and the API key locally in ESP32 NVS. The current firmware does **not** enable flash encryption. Read [Security](docs/SECURITY.md) before deploying on an untrusted network or giving away a configured device.
+Run those commands from the repository root, then open `http://localhost:8000/local-backup/`. Close any browser serial session first. The backup may contain Wi-Fi passwords, administrator settings and API credentials. **Do not upload it to GitHub or share it publicly.**
 
-## Documentation
+The local helper is **not available from GitHub Pages**. There is currently no verified full-device restore UI.
 
-| Guide | Start here when… |
-| --- | --- |
-| [User guide](docs/USER_GUIDE.md) | You're setting up a device |
-| [YouTube API key](docs/GOOGLE_YOUTUBE_API_SETUP.md) | You need a key and quota safeguards |
-| [GitHub Pages and installer](docs/GITHUB_PAGES_AND_FLASHER.md) | You're deploying the project website |
-| [Architecture](docs/ARCHITECTURE.md) | You want to understand the design |
-| [Diagnostics](docs/DIAGNOSTICS.md) | You want to inspect device events |
-| [Security](docs/SECURITY.md) | You want to understand current risks |
-| [Release readiness](docs/RELEASE_READINESS.md) | You're checking what still needs testing |
-| [Contributing](CONTRIBUTING.md) | You want to report a bug or improve the project |
+## Build the firmware yourself
 
-## License and credits
+1. Install [VS Code](https://code.visualstudio.com/) and [PlatformIO](https://platformio.org/install/ide?install=vscode).
+2. Open the `firmware/` folder as a PlatformIO project.
+3. Build environment `cyd_st7789`, then upload to a compatible board.
+4. Configure Wi-Fi, your own YouTube API key and channel in the device interface.
 
-Original firmware and repository tooling: [PolyForm Noncommercial 1.0.0](LICENSE). Original documentation: [CC BY-NC-SA 4.0](docs/LICENSE). This is **source-available for noncommercial use**, not OSI-approved open source. Third-party components retain their own licenses; see [notices](THIRD_PARTY_NOTICES.md).
+The repository includes `firmware/src`, PlatformIO configuration, automated checks and the static installer in `installer-web/`. The website is deployed using GitHub Pages Actions.
 
-Created by **[MassaCreto](https://www.youtube.com/@MassaCreto)**. The creator's channel name and artwork are not part of the firmware or licensed for reuse with the project.
+## Features and documentation
 
-Found a bug or have an idea? [Open an issue](https://github.com/massa-creto/cyd-youtube-dashboard/issues). Please remove Wi-Fi passwords, API keys and personal network information from screenshots and logs first.
+- Public channel metrics and configurable screens
+- Local device control panel, display and touch settings
+- Wi-Fi setup and recovery access point behavior
+- Device diagnostics and monitoring
+
+See the [user guide](docs/USER_GUIDE.md), [API setup](docs/GOOGLE_YOUTUBE_API_SETUP.md), [security notes](docs/SECURITY.md), [feature matrix](docs/FEATURE_MATRIX.md), and [release status](docs/PUBLIC_RELEASE_STATUS.md).
+
+## Safety, privacy and license
+
+No Google credentials or private flash backups are included in this repository. The browser installer requests serial access only after you initiate it. The browser loads `esptool-js` from a version-pinned third-party CDN, so an internet connection is required for the USB installer. The local backup helper binds to localhost.
+
+The original code is licensed under [PolyForm Noncommercial 1.0.0](LICENSE); documentation under [CC BY-NC-SA 4.0](docs/LICENSE). This is **source-available for noncommercial use**, not OSI-approved open source. See [third-party notices](THIRD_PARTY_NOTICES.md).
+
+Made by [MassaCreto](https://www.youtube.com/@MassaCreto). Issues and contributions are welcome. Remove credentials and device identifiers from logs before sharing.

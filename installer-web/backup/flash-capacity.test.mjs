@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {parseJedecId} from './flash-capacity.mjs';
+test('4 MiB common ID',()=>assert.equal(parseJedecId('EF4016').mib,4));
+test('8 MiB common ID',()=>assert.equal(parseJedecId('0xc84017').mib,8));
+test('2 MiB common ID',()=>assert.equal(parseJedecId('ef 40 15').mib,2));
+test('unsupported ID cannot unlock flashing',()=>assert.equal(parseJedecId('EF401A').bytesCapacity,null));
+test('rejects empty bus patterns',()=>{assert.throws(()=>parseJedecId('FFFFFF'));assert.throws(()=>parseJedecId('000000'));});
+test('rejects malformed ID',()=>assert.throws(()=>parseJedecId('EF401')));
+test('manual input is always unverified',()=>assert.equal(parseJedecId('EF4016').status,'unverified-manual-entry'));

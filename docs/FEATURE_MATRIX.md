@@ -11,7 +11,7 @@
 | Quota controls and history | Yes | Long-run test pending |
 | Safe settings backup and restore | Yes | Schema regression test pending |
 | Physical TFT BMP snapshot and remote touch | Yes | Browser/hardware test pending |
-| Browser-based USB firmware flashing | No | Blocked by factory-image validation |
+| Browser-based USB firmware flashing | Yes | Application write and boot confirmed on one supported board; three-image first install unverified |
 | OTA updates | Not claimed | Not tested |
 
 Presence in source does not imply verified runtime behavior.

@@ -22,3 +22,7 @@
 Backup is optional. Without a supplied backup, the installer uses a full three-image write. This is a more invasive path and is not hardware validated. Users must explicitly confirm the risk. Full backups may contain private credentials.
 
 This release includes a tested application-write path, but is not a guarantee of compatibility or recoverability.
+
+## CI and documentation
+
+GitHub Actions runs Python and JavaScript source checks and a PlatformIO build. A passing CI build does not establish compatibility with untested CYD variants.

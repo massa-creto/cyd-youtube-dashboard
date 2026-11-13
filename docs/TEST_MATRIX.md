@@ -1,48 +1,21 @@
-# Verification matrix
+# Test and verification matrix
 
-| Check | Result | Evidence |
+This table separates automated checks from physical-device evidence. A green CI build is not proof of compatibility with every CYD board.
+
+| Check | Status | Evidence / limitation |
 |---|---|---|
-| Static unit/source checks | Run locally | `python -m unittest discover -s tests -v` |
-| Brand removal from firmware | Run locally | Case-insensitive source scan |
-| Docs link existence | Run locally | Repository link checker |
-| ZIP integrity | Run locally | Python `zipfile.testzip()` |
-| PlatformIO compilation | Not run in this environment | GitHub Actions required |
-| Firmware image and partition offsets | Not verified | Factory flashing blocked |
-| Clean-device flash | Not run | Physical CYD required |
-| HTTPS Google API and avatar | Not run | Real Wi-Fi/credentials required |
-| Browser, TFT snapshot, touch | Not run | Physical CYD and browser required |
-| Penetration/security assessment | Not run | HTTP admin, NVS and provisioning remain risks |
-| Exact dependency licenses | Partial | Resolve/pin/build and audit |
+| Python source tests | Automated | `python -m unittest discover -s tests -v` |
+| JavaScript installer tests | Automated | `node --test installer-web/backup/*.test.mjs installer-web/preflight/*.test.mjs installer-web/install/*.test.mjs` |
+| PlatformIO firmware build | CI tested | GitHub Actions `firmware-build` job |
+| Release binary SHA-256 | Validated by installer | `installer-web/release/release-metadata.json` |
+| Browser USB identification | Hardware tested | ESP32-D0WD-V3, 4 MB, CH340 |
+| Browser application write at `0x10000` | Hardware tested | 1,144,592-byte application write completed |
+| Firmware boot and settings retention | Hardware tested | Maintainer confirmed device boot and retained settings |
+| Local Python full-flash backup | Hardware tested | 4,194,304-byte read, SHA-256, downloaded files |
+| Full three-image factory installation | Not hardware tested | Bootloader and partition write path requires validation |
+| Browser-native full backup | Not available | Local Python companion required |
+| Full-device restore | Disabled | Recovery workflow not hardware validated |
+| Other CYD display revisions | Not verified | Do not assume hardware compatibility |
+| Independent security assessment | Not completed | Review network provisioning and local secrets before deployment |
 
-
-## Session 1 audit checkpoint (2026-11-13)
-
-- PASS: `python -m unittest discover -s tests -q` — 42 tests.
-- STATIC: PlatformIO config, CI workflow, Pages workflow, source security review.
-- NOT RUN: PlatformIO local compilation (toolchain unavailable).
-- NOT RUN: USB diagnostics, factory flashing, clean-device setup, hardware recovery.
-- EXTERNAL EVIDENCE: User screenshot reports GitHub Actions firmware build pass for `8aefb83`; archive-to-commit identity not verified.
-
-## Session 2 additional tests
-- Partition parser normal, overlapping, invalid entries: 3/3 passed.
-- All Python unit tests: 45/45 passed.
-- Python syntax compilation: passed.
-- Firmware source unchanged: SHA-256 matched.
-- Real build partition validation, esptool backup, restore, factory flashing: **NOT TESTED**.
-
-## Session 3
-- Automated: no `port.open`, serial write, flash/erase or install methods in diagnostics script; landing page link and CSP assertions.
-- Manual pending: Chrome/Edge USB chooser, real USB VID/PID, unplug and permission behavior, device compatibility.
-- Firmware compile: not performed in Session 3.
-
-## Session 4 (2026-11-13)
-- 52/52 Python tests passed (four new installation safety tests).
-- JS syntax checked for existing read-only diagnostics.
-- Firmware SHA-256 matches Session 3 archive exactly.
-- Review-only candidate verifier checks file lengths, hashes, source commit and required metadata.
-- No real compiled artifacts, actual flash offsets, factory manifest, spare-board recovery or live browser tests available.
-
-## Factory validation preparation
-- Offline artifact review unit tests added.
-- First-run checklist authored; all hardware rows PENDING.
-- No firmware flash, erase, partition changes or hardware tests executed.
+For release scope and caveats, see [public release status](PUBLIC_RELEASE_STATUS.md).

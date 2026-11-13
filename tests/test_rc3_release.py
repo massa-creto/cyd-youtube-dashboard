@@ -14,5 +14,5 @@ class RC3(unittest.TestCase):
   self.assertIn('CC BY-NC-SA 4.0',(R/'docs/LICENSE').read_text())
  def test_doc_assets(self):
   self.assertTrue((R/'docs/assets/architecture.svg').exists())
-  self.assertTrue((R/'docs/RELEASE_READINESS.md').exists())
+  self.assertTrue((R/'docs/PUBLIC_RELEASE_STATUS.md').exists())
 if __name__=='__main__':unittest.main()

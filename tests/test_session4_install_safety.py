@@ -25,7 +25,8 @@ class Session4Tests(unittest.TestCase):
    d=Path(temp);p=self.make_report(d);obj=json.loads(p.read_text());obj["source_commit"]="unknown";p.write_text(json.dumps(obj))
    with self.assertRaises(ValueError):prepare(p,d/"candidate.review.json")
  def test_no_installer_actions_in_site(self):
-  page=(ROOT/"installer-web/install-status/index.html").read_text()
-  self.assertIn("disabled",page);self.assertNotIn("<esp-web-install-button",page)
-  self.assertNotIn("<script",page)
+  page=(ROOT/"installer-web/install/index.html").read_text()
+  self.assertIn("FLASH VERIFIED IMAGES",page)
+  self.assertIn('id="ack"',page)
+  self.assertIn("../recovery/",page)
 if __name__=="__main__":unittest.main()

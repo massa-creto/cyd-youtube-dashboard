@@ -393,10 +393,19 @@ bool historyDelta(bool subscribers, uint8_t days, int64_t& delta, double& percen
   const uint32_t today = uint32_t(now / 86400);
   if (today < days) return false;
   const uint32_t target = today - days;
-  // Do not substitute newer snapshots: that would mislabel a shorter interval.
+  // Use the latest baseline on or before the requested start. When history is
+  // younger than the selected period, use its earliest snapshot instead and
+  // explicitly label the result as partial coverage (never as a full period).
   int match = -1;
   for (int i = 0; i < history.count; ++i) {
-    if (history.points[i].day <= target) match = i;
+    if (history.points[i].day <= target &&
+        (match < 0 || history.points[i].day > history.points[match].day)) match = i;
+  }
+  if (match < 0) {
+    for (int i = 0; i < history.count; ++i) {
+      if (history.points[i].day <= today &&
+          (match < 0 || history.points[i].day < history.points[match].day)) match = i;
+    }
   }
   if (match < 0) return false;
   const uint64_t oldValue = subscribers ? history.points[match].subscribers : history.points[match].views;
@@ -634,7 +643,8 @@ void detail(uint8_t phase) {
       String pct = sign + String(percentage, 1) + "%";
       uiText(fitText(amount + "  (" + pct + ")", 2, 272), 23, 180, 2,
              change >= 0 ? kGreen : kPurple, kCard);
-      if (actualDays != days) uiText("Baseline " + String(actualDays) + "d old", 23, 200, 1, kMuted, kCard);
+      if (actualDays < days) uiText("Partial history: " + String(actualDays) + "d of " + String(days) + "d", 23, 200, 1, kMuted, kCard);
+      else if (actualDays > days) uiText("Baseline " + String(actualDays) + "d old", 23, 200, 1, kMuted, kCard);
     } else {
       uiText("Collecting history...", 23, 184, 2, kMuted, kCard);
       uiText("Daily snapshots begin at first sync", 23, 201, 1, kMuted, kCard);

@@ -66,3 +66,8 @@ No Google credentials or private flash backups are included in this repository. 
 The original code is licensed under [PolyForm Noncommercial 1.0.0](LICENSE); documentation under [CC BY-NC-SA 4.0](docs/LICENSE). This is **source-available for noncommercial use**, not OSI-approved open source. See [third-party notices](THIRD_PARTY_NOTICES.md).
 
 Made by [MassaCreto](https://www.youtube.com/@MassaCreto). Issues and contributions are welcome. Remove credentials and device identifiers from logs before sharing.
+
+
+### History coverage
+
+Subscriber and view changes use available UTC-day snapshots. When the selected period exceeds recorded history, the device labels the displayed change as **Partial history** rather than implying complete coverage. See [history coverage](docs/SUBSCRIBER_HISTORY_COVERAGE.md).

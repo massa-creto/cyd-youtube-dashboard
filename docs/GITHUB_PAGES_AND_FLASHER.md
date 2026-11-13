@@ -32,3 +32,7 @@ When the factory image has passed validation, we can enable an ESP Web Tools but
 - Publish checksums and document recovery steps.
 
 Do not publish a guessed manifest or upload binary files copied from an unrelated board configuration.
+
+## Safety and recovery
+
+The browser-first release requires a full flash backup even for new devices, local verification and explicit acknowledgement of brick/data-loss risks before any write. These functions are **not yet implemented or hardware validated**. See [web flasher safety requirements](WEB_FLASHER_SAFETY_AND_RECOVERY.md) and the [public recovery guide](../installer-web/recovery/).

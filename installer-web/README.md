@@ -6,3 +6,5 @@ This is a safe placeholder, not a working flasher. It will be deployed to GitHub
 
 
 The diagnostics section provides `/diagnostics/` for read-only USB metadata and simulation. It does not identify the ESP32 chip, read flash, or install firmware. HTTPS or localhost and Chrome/Edge are required for real Web Serial selection.
+
+Recovery and unbrick instructions are published at `recovery/`. They do not perform writes. Browser backup and factory flashing remain disabled pending hardware validation.

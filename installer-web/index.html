@@ -47,7 +47,7 @@
       <section class="card">
         <h2>Browser USB installer <small style="font-size:.7em;color:#e6c989">PENDING VALIDATION</small></h2>
         <p>We are validating a clean-install image and its flash layout. Until then, no one-click flash button is offered. You can still compile and upload using PlatformIO.</p>
-        <p><a href="diagnostics/">Open read-only USB diagnostics</a> · <a href="install-status/">Installation readiness</a></p><p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/GITHUB_PAGES_AND_FLASHER.md">Installer status and plan</a></p>
+        <p><a href="recovery/">Recovery and unbrick guide</a> · <a href="diagnostics/">Open read-only USB diagnostics</a> · <a href="install-status/">Installation readiness</a></p><p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/GITHUB_PAGES_AND_FLASHER.md">Installer status and plan</a></p>
       </section>
       <section class="card">
         <h2>Connect your channel</h2>
@@ -60,6 +60,11 @@
         <p><a href="https://github.com/massa-creto/cyd-youtube-dashboard/blob/main/docs/RELEASE_READINESS.md">Release readiness</a></p>
       </section>
     </div>
+    <section class="notice" role="note">
+      <h2>Back up before flashing — including new devices</h2>
+      <p>Factory firmware may be valuable. A complete flash image may contain Wi-Fi passwords, YouTube API keys, administrator credentials and other private settings. Store backups locally, never share them publicly, and verify the backup before writing anything. Browser backup and restore are still under development; the current website does not read or write flash.</p>
+      <p><strong>Flashing can leave a device unbootable.</strong> Recovery is often possible using the ESP32 ROM download mode, but is not guaranteed. <a href="recovery/">Read the recovery and unbrick guide</a> before attempting installation.</p>
+    </section>
     <section class="notice">
       <h2>Why is the USB installer intentionally disabled?</h2>
       <p>Factory images, flash offsets and first-boot behavior have not yet been verified on a clean device. Enabling one-click flashing now could leave users with an unbootable board or overwrite saved settings. We will enable it only after hardware validation.</p>
